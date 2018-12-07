@@ -1,0 +1,67 @@
+{
+  "AppName": "Deep Otaku Comic",
+  "CoinName": "gold",
+
+  "YES": "Yes",
+  "NO": "No",
+  "SURE": "Sure",
+  "CANCEL": "Cancel",
+  "NEED": "Need",
+  "Pay": "Pay",
+  "NAME": "Name",
+  "PASSWORD": "Password",
+  "REFRESH": "Refresh",
+  "GoBack": "Go Back",
+  "UserLeft": "Left",
+  "AreYouSure": "Are You Sure?",
+  "DoYouWantExitApp": "Do you want to exit?",
+  "AddToFavors": "Add To My Favors",
+  "DeleteFromFavors": "Remove From Favors",
+
+  "HotTitle": "Hot",
+  "BookTitle": "Favor",
+  "PersonTitle": "Me",
+
+
+  "LoginTitle": "Login Page",
+  "GoToLogin": "Goto Login Page",
+  "Login": "Login",
+  "LoginOut": "Login Out",
+  "LoginClean": "Clean",
+  "LoginCleanThenRegister": "Clean Then Register",
+  "LoginFail": "Login Fail",
+  "LoginFailWithSize": "Name or password length error",
+  "AutoRegister": "Auto register an account",
+
+  "ComicIsEmpty": "Comic list is empty",
+
+  "LastPageNoPayed": "buy previous chapter first",
+  "PayFail": "Pay fail",
+  "PayWithUserLeft": "Pay $coin gold(now left: $money)",
+
+  "ChapterPageNo": "NO: $No",
+
+  "MyBooks": "My Favors",
+  "BooksIsEmpty": "My Favors is empty",
+  "FindBooks": "Go to find",
+
+
+  "PayOrder": "Order",
+  "NoPayPlatforms": "No Pay platforms found",
+  "NoUserFound": "User not Found",
+  "PayNotStart": "Check not Start",
+  "RechargeError": "Recharge Error",
+  "ReturnAndPay": "Go back and Pay again",
+
+  "ChooseRechargeMoney": "Choose recharge money",
+  "ChooseRechargeType": "Choose recharge type",
+  "RechargeNow": "Recharge Now",
+
+  "AfterPay": "Read after pay",
+  "PayBuyCoin": "Pay buy gold",
+
+
+
+
+  "ENDOFJSON": "END"
+}

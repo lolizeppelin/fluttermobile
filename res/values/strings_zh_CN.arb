@@ -1,0 +1,67 @@
+{
+  "AppName": "深宅漫画",
+  "CoinName": "宅男币",
+
+  "YES": "是",
+  "NO": "否",
+  "SURE": "确定",
+  "CANCEL": "取消",
+  "NEED": "需要",
+  "Pay": "支付",
+  "NAME": "用户名",
+  "PASSWORD": "密码",
+  "REFRESH": "刷新",
+  "GoBack": "返回",
+  "UserLeft": "剩余",
+  "AreYouSure": "是否确定?",
+  "DoYouWantExitApp": "退出漫画程序",
+  "AddToFavors": "添加到我的收藏",
+  "DeleteFromFavors": "取消收藏",
+
+  "HotTitle": "热们",
+  "BookTitle": "收藏",
+  "PersonTitle": "我的",
+
+
+  "LoginTitle": "登陆页",
+  "GoToLogin": "跳转至登陆",
+  "Login": "登陆",
+  "LoginOut": "注销",
+  "LoginClean": "清除",
+  "LoginCleanThenRegister": "清除并注册",
+  "LoginFail": "登陆失败",
+  "LoginFailWithSize": "用户名或密码长度不足",
+  "AutoRegister": "自动注册",
+
+  "ComicIsEmpty": "漫画列表为空",
+
+  "LastPageNoPayed": "请先购买上一章节",
+  "PayFail": "支付失败",
+  "PayWithUserLeft": "支付 $coin 宅男币(剩余: $money)",
+
+  "ChapterPageNo": "第:$No章",
+
+  "MyBooks": "我的收藏",
+  "BooksIsEmpty": "不收藏怎么追番(^o^)/",
+  "FindBooks": "赶紧去找",
+
+
+  "PayOrder": "订单",
+  "NoPayPlatforms": "无支付渠道",
+  "NoUserFound": "用户为找到",
+  "PayNotStart": "订单未发起",
+  "RechargeError": "充值出错",
+  "ReturnAndPay": "重新支付",
+
+  "ChooseRechargeMoney": "选择支付金额",
+  "ChooseRechargeType": "选择支付渠道",
+  "RechargeNow": "立刻支付",
+
+  "AfterPay": "购买后阅读",
+  "PayBuyCoin": "宅男币支付",
+
+
+
+
+  "ENDOFJSON": "END"
+}
