@@ -35,7 +35,10 @@ class FlutterComicClient {
   static const buy_path = '/fluttercomic/%s/comic/%s/chapter/%s/user/%s';
   static const chapter_path = '/fluttercomic/%s/comic/%s/chapters/%s';
 
-  static const html_template = '/fluttercomic/orders/platforms';
+  static const platforms = '/fluttercomic/orders/platforms';
+
+  static const orders_path = '/fluttercomic/orders/platforms/%s';
+  static const order_path = '/fluttercomic/orders/platforms/%s/%s';
 
 
   static String buildurl(String host, String path,
@@ -185,7 +188,7 @@ class FlutterComicClient {
     if (!dao.loading) {
       final String url = buildurl(host, buy_path, [dao.comic.cid.toString(), chapter.toString(), dao.user.uid.toString()], 'private');
       SingletonStore.store.dispatch(BuyChapter(payload: 0));
-      return http.post(url,  headers: buildheader(token: SingletonStore.store.state.user.token))
+      return http.post(url, headers: buildheader(token: SingletonStore.store.state.user.token))
           .then((response) {
         Map comic = getResult(response)[0];
         SingletonStore.store.dispatch(BuyChapterSuccess(payload: comic));
@@ -199,5 +202,34 @@ class FlutterComicClient {
     }
   }
 
+
+  static Future<Map<String, dynamic>> weixinOrder(String host, int uid, int money, int cid, int chapter) async {
+    final String url = buildurl(host, orders_path, ['weixin'], 'public');
+    Map<String, dynamic> result;
+    await http.post(url,
+      headers: FlutterComicClient.buildheader(),
+      body: {
+        'money': money,
+        'cid': cid,
+        'chapter': chapter,
+        'uid': uid,
+      },
+    ).then((response) {
+      result = Map<String, dynamic>.from(FlutterComicClient.getResult(response)[0]);
+    });
+    return result;
+  }
+
+
+  static Future<Map<String, dynamic>> esureWeiXinOrder(String host, int oid) async {
+    final String url = buildurl(host, order_path, ['weixin', oid.toString()], 'public');
+    Map<String, dynamic> result;
+    await http.get(url,
+      headers: FlutterComicClient.buildheader(token: SingletonStore.store.state.user.token),
+    ).then((response) {
+      result = Map<String, dynamic>.from(FlutterComicClient.getResult(response)[0]);
+    });
+    return result;
+  }
 
 }

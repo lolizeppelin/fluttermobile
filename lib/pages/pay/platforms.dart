@@ -6,6 +6,7 @@ import 'package:flutter_manhua/generated/i18n.dart';
 import 'package:flutter_manhua/constant/common.dart';
 
 import 'package:flutter_manhua/pages/pay/paypal.dart';
+import 'package:flutter_manhua/pages/pay/weixin.dart';
 
 import 'package:flutter_manhua/redux/dao/users.dart';
 import 'package:flutter_manhua/redux/store.dart';
@@ -18,6 +19,7 @@ typedef dynamic OnFinish(bool result);
 
 const Map PLATFORMS = {
   'paypal': PaypalPage,
+  'weixin': WeiXinPage,
 };
 
 
@@ -59,7 +61,7 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
 
     Set<String> LOCALPLATFORMS = Set.from(PLATFORMS.keys);
     
-    for (String p in platforms) {
+    for (String p in platforms) {           //  判断本地代码是否支持渠道
       if (!LOCALPLATFORMS.contains(p)) platforms.remove(p);
     }
 

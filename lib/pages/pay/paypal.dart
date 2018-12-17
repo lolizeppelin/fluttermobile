@@ -21,7 +21,7 @@ class PaypalPage extends StatefulWidget {
   final UsersDao user = UsersDao(SingletonStore.store);
   final OnFinish callback;
 
-  static final url = 'http://$API_HOSTNAME/n1.0${FlutterComicClient.html_template}/paypal';
+  static final url = 'http://$API_HOSTNAME/n1.0${FlutterComicClient.platforms}/paypal';
 
   PaypalPage({this.money, this.callback});
 

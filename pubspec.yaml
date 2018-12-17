@@ -50,8 +50,7 @@ dependencies:
 #      path: tree/webview_post_message
       ref: webview_post_message
 
-#  pull_to_refresh: ^1.1.4
-
+  fluwx: ^0.5.2
 
 dev_dependencies:
   flutter_test:

@@ -8,4 +8,6 @@ build/
 
 .flutter-plugins
 
+pubspec.lock
+
 android/key.properties
