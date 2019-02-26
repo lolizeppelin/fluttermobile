@@ -37,7 +37,7 @@ class WeixinApi {
   String partnerId;
   String package;
 
-  factory WeixinApi(Map<String, String> wxInfo) {
+  factory WeixinApi(Map<String, dynamic> wxInfo) {
 
     if (_instances.containsKey(WeixinApi._sys)) {
       return _instances[WeixinApi._sys];
@@ -48,7 +48,7 @@ class WeixinApi {
     }
   }
 
-  WeixinApi._internal(Map<String, String> wxInfo) {
+  WeixinApi._internal(Map<String, dynamic> wxInfo) {
     appId = wxInfo['appId'];
     partnerId = wxInfo['appId'];
     package = wxInfo['package'];
@@ -69,7 +69,7 @@ class WeixinApi {
   }
 
   bool get listening {
-    return subscription == null;
+    return subscription != null;
   }
 
   Future create(int uid, int money, int cid, int chapter) {
@@ -109,7 +109,9 @@ class WeiXinPage extends StatefulWidget {
 
 class _WeiXinPageState extends State<WeiXinPage> {
 
-  bool loading = true;
+  bool conflict = false;
+
+  bool loading = false;
   int step = 1;
 
   bool stop = false;
@@ -121,31 +123,53 @@ class _WeiXinPageState extends State<WeiXinPage> {
   @override
   void initState() {
     super.initState();
-    Map<String, dynamic> platform = widget.user.platforms['weixin'];
+    Map<String, dynamic> platform = Map<String, dynamic>.from(widget.user.platforms['weixin']);
     wxApi = WeixinApi(platform);
-    if (wxApi.appId != platform['appId']) wxApi = null;  // 微信接口单例,变更需要重启客户端
+
+    if (wxApi.appId != platform['appId']) {
+      wxApi = null;  // 微信接口单例,变更需要重启客户端
+      return;
+    }
+    if (wxApi.listening) {
+      conflict = true;
+      return;
+    }
+    pay();
   }
 
   @override
   void dispose() {
     super.dispose();
     stop = true;
-    wxApi.unlisten();
+    if (wxApi != null && !conflict) wxApi.unlisten();
   }
 
-  Future<Null> pay() async {
+  pay() async {
+
     setState(() {
       loading = true;
     });
 
-    Map<String, dynamic> result = await wxApi.create(widget.user.uid, widget.money, widget.user.cid, 0);  // 服务端下单,同步
-    final Map<String, dynamic> wxOrder = result['weixin'];
+
+    Map<String, dynamic> result;
+
+    try {
+      result = await wxApi.create(widget.user.uid, widget.money, widget.user.cid, 0);
+    } catch (_) {
+      print('服务端下单失败');
+      print(_);
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
+
+    final Map<String, dynamic> wxOrder = Map<String, dynamic>.from(result['weixin']);
 
     print('服务端下单成功');
-    if (wxApi.listening) throw Exception('Api is listening');
     final int oid = result['oid'];
 
-    await wxApi.pay(oid, wxOrder['prepayId'], wxOrder['random'], wxOrder['time'], wxOrder['sign'])   // 客户端支付协程
+    await wxApi.pay(oid, wxOrder['prepayId'], wxOrder['random'], wxOrder['time'], wxOrder['sign'])   // 客户端支付
         .then((_) {
             step = 2;
             print('客户端支付成功');
@@ -164,20 +188,10 @@ class _WeiXinPageState extends State<WeiXinPage> {
 
     wxApi.listen((_) async {      // 支付确认协程
 
-
       print(_);                    // 处理客户端支付回调
 
-      setState(() {
-        step = 0;
-        loading = false;
-      });
-
-      return;
-
-
-      int count = 3;
       print('客户端尝试确认支付');
-
+      int count = 3;
       while (count>0) {
         if (await wxApi.esure(oid)) {
           print('客户端确认支付成功');
@@ -196,13 +210,6 @@ class _WeiXinPageState extends State<WeiXinPage> {
         if (stop) return;
         count --;
       }
-
-      if (stop) {
-        wxApi.unlisten();
-        setState(() {
-          loading = false;
-        });
-      }
       print('客户端确认支付失败');
     });
   }
@@ -219,19 +226,20 @@ class _WeiXinPageState extends State<WeiXinPage> {
         ),
       );
 
-    if (wxApi.listening)
+    if (conflict)
       return Scaffold(
         appBar: AppBar(),
         body: Center(
-          child: Text('上一个支付API未完成不能支付'),
+          child: Text('上一个微信支付API未完成不能支付'),
         ),
       );
 
 
     return Scaffold(
-     body: loading
-         ? Center(child: CircularProgressIndicator())
-         : Container(child: Text('step is $step'))
+      appBar: AppBar(),
+        body: loading
+            ? Center(child: CircularProgressIndicator())
+            : Container(child: Text('step is $step'))
     );
   }
 }

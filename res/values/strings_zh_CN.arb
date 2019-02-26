@@ -39,7 +39,7 @@
   "PayFail": "支付失败",
   "PayWithUserLeft": "支付 $coin 宅男币(剩余: $money)",
 
-  "ChapterPageNo": "第:$No章",
+  "ChapterPageNo": "第:${No}章",
 
   "MyBooks": "我的收藏",
   "BooksIsEmpty": "不收藏怎么追番(^o^)/",

@@ -125,11 +125,18 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: webview_post_message
-      resolved-ref: "664c981442c7f90874221932d2f82e9f3444c66f"
+      ref: "190ebddb59df843b7f05467025b2e1f3ab9b9420"
+      resolved-ref: "190ebddb59df843b7f05467025b2e1f3ab9b9420"
       url: "https://github.com/lolizeppelin/flutter_webview_plugin"
     source: git
     version: "0.3.0+2"
+  fluwx:
+    dependency: "direct main"
+    description:
+      name: fluwx
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.5.2"
   front_end:
     dependency: transitive
     description:

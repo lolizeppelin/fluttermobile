@@ -139,6 +139,7 @@ class FlutterComicClient {
           SingletonStore.store.dispatch(ListComicFinish(payload: _comics));
     })
         .catchError((error) {
+          print(error);
       SingletonStore.store.dispatch(ListComicFail(payload: 0));
     });
   }
@@ -204,16 +205,17 @@ class FlutterComicClient {
 
 
   static Future<Map<String, dynamic>> weixinOrder(String host, int uid, int money, int cid, int chapter) async {
-    final String url = buildurl(host, orders_path, ['weixin'], 'public');
+    final String url = 'http://$host/n1.0${FlutterComicClient.platforms}/weixin';
+    print(url);
     Map<String, dynamic> result;
     await http.post(url,
       headers: FlutterComicClient.buildheader(),
-      body: {
+      body: json.encode({
         'money': money,
         'cid': cid,
         'chapter': chapter,
         'uid': uid,
-      },
+      }),
     ).then((response) {
       result = Map<String, dynamic>.from(FlutterComicClient.getResult(response)[0]);
     });
@@ -223,6 +225,37 @@ class FlutterComicClient {
 
   static Future<Map<String, dynamic>> esureWeiXinOrder(String host, int oid) async {
     final String url = buildurl(host, order_path, ['weixin', oid.toString()], 'public');
+    Map<String, dynamic> result;
+    await http.get(url,
+      headers: FlutterComicClient.buildheader(token: SingletonStore.store.state.user.token),
+    ).then((response) {
+      result = Map<String, dynamic>.from(FlutterComicClient.getResult(response)[0]);
+    });
+    return result;
+  }
+
+
+  static Future<Map<String, dynamic>> iPayOrder(String host, int uid, int money, int cid, int chapter) async {
+    final String url = 'http://$host/n1.0${FlutterComicClient.platforms}/ipay';
+    print(url);
+    Map<String, dynamic> result;
+    await http.post(url,
+      headers: FlutterComicClient.buildheader(),
+      body: json.encode({
+        'money': money,
+        'cid': cid,
+        'chapter': chapter,
+        'uid': uid,
+      }),
+    ).then((response) {
+      result = Map<String, dynamic>.from(FlutterComicClient.getResult(response)[0]);
+    });
+    return result;
+  }
+
+
+  static Future<Map<String, dynamic>> esureIpayOrder(String host, int oid) async {
+    final String url = buildurl(host, order_path, ['ipay', oid.toString()], 'public');
     Map<String, dynamic> result;
     await http.get(url,
       headers: FlutterComicClient.buildheader(token: SingletonStore.store.state.user.token),

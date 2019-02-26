@@ -7,6 +7,7 @@ import 'package:flutter_manhua/constant/common.dart';
 
 import 'package:flutter_manhua/pages/pay/paypal.dart';
 import 'package:flutter_manhua/pages/pay/weixin.dart';
+import 'package:flutter_manhua/pages/pay/ipay.dart';
 
 import 'package:flutter_manhua/redux/dao/users.dart';
 import 'package:flutter_manhua/redux/store.dart';
@@ -17,10 +18,10 @@ typedef void Confirm();
 typedef dynamic OnFinish(bool result);
 
 
-const Map PLATFORMS = {
-  'paypal': PaypalPage,
-  'weixin': WeiXinPage,
-};
+//const Map PLATFORMS = {
+//  'paypal': PaypalPage,
+//  'weixin': WeiXinPage,
+//};
 
 
 class PlateFormChoice extends StatefulWidget {
@@ -58,10 +59,8 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
     platforms =   widget.user.platforms != null
         ? widget.user.platforms.keys.toList()
         : [];
-
-    Set<String> LOCALPLATFORMS = Set.from(PLATFORMS.keys);
     
-    for (String p in platforms) {           //  判断本地代码是否支持渠道
+    for (String p in platforms) {           //  判断本地代码是否支持服务器可选渠道
       if (!LOCALPLATFORMS.contains(p)) platforms.remove(p);
     }
 
@@ -71,7 +70,6 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
     }
 
   }
-
 
   void _selectPlatform(String p) {
     platform = p;
@@ -83,7 +81,6 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
     if (choices.length > 0) pay = choices[0];
   }
 
-
   static NumberFormat _currencyFormat(Locale local, String currency) {
 
     Map<String, dynamic> _currency = Currencys[currency];
@@ -93,6 +90,17 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
         decimalDigits: 2,
     );
   }
+
+  static Widget pageBuilder(String platform, money, callback) {
+
+    switch (platform) {
+      case 'paypal': return PaypalPage(money: money, callback: callback);
+      case 'weixin': return WeiXinPage(money: money, callback: callback);
+      case 'ipay': return IPayPage(money: money, callback: callback);
+    }
+    return PaypalPage(money: money, callback: callback);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +180,7 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
                     child: Padding(
                       padding: EdgeInsets.only(right: 5.0),
                       child: Container(
-                          child: Image.asset('assets/$platform.png'),
+                          child: Image.asset('assets/${platforms[index]}.png'),
                           decoration: active ? BoxDecoration(border: Border.all(width: 2.0, color: Colors.orange)) : null
                       ),
                     )
@@ -198,7 +206,7 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
                 height: 50,
                   onPressed: () {
                     if (widget.confirmCallback != null) widget.confirmCallback();
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PaypalPage(money: pay, callback: widget.finishCallback)));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => pageBuilder(platform, pay, widget.finishCallback)));
                   },
                   child: Container(
                     child: Center(

@@ -43,12 +43,12 @@ dependencies:
   sprintf: ^4.0.0
 
 #  flutter_webview_plugin: ^0.2.1
-#  flutter_webview_plugin: path: ./
   flutter_webview_plugin:
     git:
       url: https://github.com/lolizeppelin/flutter_webview_plugin
 #      path: tree/webview_post_message
-      ref: webview_post_message
+#      ref: webview_post_message
+      ref: 190ebddb59df843b7f05467025b2e1f3ab9b9420
 
   fluwx: ^0.5.2
 
@@ -74,9 +74,11 @@ flutter:
   #  - images/a_dot_ham.jpeg
 
   assets:
+    - assets/paypal.png
+    - assets/weixin.png
+    - assets/ipay.png
     - assets/empty.png
     - assets/pg.png
-    - assets/paypal.png
     - assets/book.png
 
 #  fonts:

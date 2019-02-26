@@ -33,6 +33,7 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        checkReleaseBuilds false
     }
 
     defaultConfig {
@@ -59,8 +60,8 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug
-//            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
