@@ -235,7 +235,7 @@ class FlutterComicClient {
   }
 
 
-  static Future<Map<String, dynamic>> iPayOrder(String host, int uid, int money, int cid, int chapter) async {
+  static Future<Map<String, dynamic>> iPayOrder(String host, int uid, int money, int cid, int chapter, bool h5) async {
     final String url = 'http://$host/n1.0${FlutterComicClient.platforms}/ipay';
     print(url);
     Map<String, dynamic> result;
@@ -246,6 +246,7 @@ class FlutterComicClient {
         'cid': cid,
         'chapter': chapter,
         'uid': uid,
+        'h5': h5,
       }),
     ).then((response) {
       result = Map<String, dynamic>.from(FlutterComicClient.getResult(response)[0]);

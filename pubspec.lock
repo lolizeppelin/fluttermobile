@@ -14,7 +14,7 @@ packages:
       name: analyzer
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.33.3+2"
+    version: "0.35.3"
   args:
     dependency: transitive
     description:
@@ -63,7 +63,7 @@ packages:
       name: convert
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.2"
+    version: "2.1.1"
   crypto:
     dependency: transitive
     description:
@@ -85,6 +85,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
+  fluipay:
+    dependency: "direct main"
+    description:
+      path: "..\\fluipay"
+      relative: true
+    source: path
+    version: "0.0.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -108,14 +115,14 @@ packages:
       name: flutter_redux
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.5.2"
+    version: "0.5.3"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
       name: flutter_staggered_grid_view
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.4"
+    version: "0.2.7"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -125,8 +132,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "190ebddb59df843b7f05467025b2e1f3ab9b9420"
-      resolved-ref: "190ebddb59df843b7f05467025b2e1f3ab9b9420"
+      ref: "76dd4d55a9d0c8279be6d3b4ea617b5efe6f7f17"
+      resolved-ref: "76dd4d55a9d0c8279be6d3b4ea617b5efe6f7f17"
       url: "https://github.com/lolizeppelin/flutter_webview_plugin"
     source: git
     version: "0.3.0+2"
@@ -136,14 +143,14 @@ packages:
       name: fluwx
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.5.2"
+    version: "0.6.0"
   front_end:
     dependency: transitive
     description:
       name: front_end
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.1.6+5"
+    version: "0.1.13"
   glob:
     dependency: transitive
     description:
@@ -157,14 +164,14 @@ packages:
       name: html
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.13.3+3"
+    version: "0.13.4+1"
   http:
     dependency: "direct main"
     description:
       name: http
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.12.0"
+    version: "0.12.0+1"
   http_multi_server:
     dependency: transitive
     description:
@@ -213,7 +220,7 @@ packages:
       name: kernel
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.3.6+5"
+    version: "0.3.13"
   logging:
     dependency: transitive
     description:
@@ -276,7 +283,7 @@ packages:
       name: package_resolver
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.6"
+    version: "1.0.10"
   path:
     dependency: transitive
     description:
@@ -291,6 +298,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.1"
+  pedantic:
+    dependency: transitive
+    description:
+      name: pedantic
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.4.0"
   photo_view:
     dependency: "direct main"
     description:
@@ -311,7 +325,7 @@ packages:
       name: pool
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.3.6"
+    version: "1.4.0"
   pub_semver:
     dependency: transitive
     description:
@@ -346,7 +360,7 @@ packages:
       name: shelf
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.7.3+3"
+    version: "0.7.4"
   shelf_packages_handler:
     dependency: transitive
     description:
@@ -393,14 +407,14 @@ packages:
       name: source_span
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.4.1"
+    version: "1.5.4"
   sprintf:
     dependency: "direct main"
     description:
       name: sprintf
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.0.0"
+    version: "4.0.2"
   sqflite:
     dependency: "direct main"
     description:
@@ -435,35 +449,35 @@ packages:
       name: synchronized
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.5.3"
+    version: "1.5.3+2"
   term_glyph:
     dependency: transitive
     description:
       name: term_glyph
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.1"
+    version: "1.1.0"
   test:
     dependency: transitive
     description:
       name: test
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.5.1"
+    version: "1.5.3"
   test_api:
     dependency: transitive
     description:
       name: test_api
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.2"
   test_core:
     dependency: transitive
     description:
       name: test_core
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.1+1"
   transparent_image:
     dependency: "direct main"
     description:
@@ -528,5 +542,5 @@ packages:
     source: hosted
     version: "2.1.15"
 sdks:
-  dart: ">=2.1.0-dev.5.0 <3.0.0"
+  dart: ">=2.1.0 <3.0.0"
   flutter: ">=0.1.4 <2.0.0"

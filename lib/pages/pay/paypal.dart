@@ -69,8 +69,8 @@ class _PaypalPageState extends State<PaypalPage> {
             int coins = result['coins'];
             SingletonStore.store.dispatch(ChangeCoins(payload: coins));
             if (widget.callback != null) widget.callback(true);
-            flutterWebviewPlugin.close();
             Navigator.pop(this.context);
+            return null;
           }
           setState(() {
             if (widget.callback != null) widget.callback(false);
@@ -86,6 +86,7 @@ class _PaypalPageState extends State<PaypalPage> {
     _onHttpError.cancel();
     _onDestroy.cancel();
     _onWebviewMessaged.cancel();
+    flutterWebviewPlugin.close();
     flutterWebviewPlugin.dispose();
     super.dispose();
   }

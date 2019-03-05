@@ -48,9 +48,13 @@ dependencies:
       url: https://github.com/lolizeppelin/flutter_webview_plugin
 #      path: tree/webview_post_message
 #      ref: webview_post_message
-      ref: 190ebddb59df843b7f05467025b2e1f3ab9b9420
+      ref: 76dd4d55a9d0c8279be6d3b4ea617b5efe6f7f17
 
-  fluwx: ^0.5.2
+
+  fluipay:
+    path: ../fluipay
+
+  fluwx: ^0.6.0
 
 dev_dependencies:
   flutter_test:

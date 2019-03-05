@@ -10,15 +10,16 @@ import 'package:flutter_manhua/constant/common.dart';
 import 'package:flutter_manhua/utils/requests.dart';
 import 'package:flutter_manhua/redux/dao/users.dart';
 import 'package:flutter_manhua/redux/store.dart';
+import 'package:flutter_manhua/redux/actions/user.dart';
 
-import 'package:fluwx/fluwx.dart' as fluwx;
+import 'package:fluipay/fluipay.dart' as fluipay;
 
 import 'platforms.dart';
 
 
 String getSystem() {
   if (Platform.isAndroid) return 'android';
-  if (Platform.isIOS) return 'android';
+  if (Platform.isIOS) return 'ios';
   throw Exception('System type error');
 }
 
@@ -32,56 +33,40 @@ class IPayApi {
   StreamSubscription subscription;
 
   String appId;
-  String partnerId;
-  String package;
+  bool h5;    // H5 支付标记
 
-  factory IPayApi(Map<String, dynamic> wxInfo) {
+  factory IPayApi(Map<String, dynamic> ipayInfo) {
 
     if (_instances.containsKey(IPayApi._sys)) {
       return _instances[IPayApi._sys];
     } else {
-      final instance = IPayApi._internal(wxInfo);
+      final instance = IPayApi._internal(ipayInfo);
       _instances[IPayApi._sys] = instance;
       return instance;
     }
   }
 
-  IPayApi._internal(Map<String, dynamic> wxInfo) {
-    appId = wxInfo['appId'];
-    partnerId = wxInfo['appId'];
-    package = wxInfo['package'];
-    fluwx.register(appId: appId);
+  IPayApi._internal(Map<String, dynamic> ipayInfo) {
+    appId = ipayInfo['appId'];
+    h5 = ipayInfo['h5'];
+    if (!h5) fluipay.register(appId: appId);  // SDK支付,调用sdk初始化
   }
 
-
-  void listen(callback) {
-    if (subscription != null) throw Exception('Listen not cancel, can not listen new handle');
-    subscription = fluwx.responseFromPayment.listen(callback);
+  Future create(int uid, int money, int cid, int chapter) {    // 通过服务器下单, h5 sdk通用
+    return FlutterComicClient.iPayOrder(API_HOSTNAME, uid, money, cid, chapter, h5);
   }
 
-  void unlisten() {
-    if (subscription != null) {
-      subscription.cancel();
-      subscription = null;
-    }
+  Future<Map<String, dynamic>> pay(String transid) async {   // 调用sdk支付
+    Map<String, dynamic> result = Map<String, dynamic>.from(await fluipay.pay(transid: transid));
+    return Map<String, dynamic>.from(result['data']);
   }
 
-  bool get listening {
-    return subscription != null;
+  Future<Map<String, dynamic>> esure(int oid) async {     // 去服务端校验支付结果
+    return await FlutterComicClient.esureIpayOrder(API_HOSTNAME, oid);
   }
 
-  Future create(int uid, int money, int cid, int chapter) {
-    return FlutterComicClient.iPayOrder(API_HOSTNAME, money, uid, cid, chapter);
-  }
-
-  Future<bool> esure(int oid) async {
-    try {
-      await FlutterComicClient.esureIpayOrder(API_HOSTNAME, oid);
-      return true;
-
-    } catch (_) {
-      return false;
-    }
+  List<bool> check(String url, String urr, String url_h) {  // H5支付用于校验跳转url
+    return [true, true];
   }
 
 }
@@ -99,6 +84,7 @@ class IPayPage extends StatefulWidget {
   _IPayPageState createState() => _IPayPageState();
 }
 
+
 class _IPayPageState extends State<IPayPage> {
 
   final flutterWebviewPlugin = FlutterWebviewPlugin();
@@ -107,16 +93,13 @@ class _IPayPageState extends State<IPayPage> {
   StreamSubscription _onDestroy;
   StreamSubscription<String> _onUrlChanged;
 
+  bool finish = false;
 
-  bool conflict = false;
-
-  bool loading = false;
-
-  bool stop = false;
-
-  String tid = '';
+  String transid;
 
   String url;
+  String url_r;  // h5 支付成功请求url
+  String url_h;  // h5 支付失败请求url
 
   int oid = 0;
 
@@ -128,92 +111,116 @@ class _IPayPageState extends State<IPayPage> {
   void initState() {
     super.initState();
 
-    flutterWebviewPlugin.close();
-
-    _onHttpError =
-        flutterWebviewPlugin.onHttpError.listen((WebViewHttpError error) {
-          print('http error~~~~~~~~~~~~~~~~~~${error.code}~~~${error.url}');
-        });
-
-    _onDestroy =
-        flutterWebviewPlugin.onDestroy.listen((_) {
-          print('http destroy~~~~~~~~~~~~~~~~~~Webview ?}');
-          setState(() {
-            oid = -1;
-          });
-        });
-
-    _onUrlChanged =
-        flutterWebviewPlugin.onUrlChanged.listen((String url) {
-          print('http change url~~~~~~~~~~~~~~~~~~Webview change}');
-//          setState(() {
-//            oid = -1;
-//          });
-        });
-
-
-
     Map<String, dynamic> platform = Map<String, dynamic>.from(widget.user.platforms['ipay']);
     iPayApi = IPayApi(platform);
-
     if (iPayApi.appId != platform['appId']) {
       iPayApi = null;  // 接口单例,变更需要重启客户端
       return;
     }
-    if (iPayApi.listening) {
-      conflict = true;
-      return;
+    if (iPayApi.h5) {  // h5 支付使用webview
+      flutterWebviewPlugin.close();
+
+      _onHttpError =
+          flutterWebviewPlugin.onHttpError.listen((WebViewHttpError error) {
+            print('http error~~~~~~~~~~~~~~~~~~${error.code}~~~${error.url}');
+          });
+
+      _onDestroy =
+          flutterWebviewPlugin.onDestroy.listen((_) {
+            print('http destroy~~~~~~~~~~~~~~~~~~Webview ?}');
+            setState(() {
+              oid = -1;
+            });
+          });
+
+      _onUrlChanged =
+          flutterWebviewPlugin.onUrlChanged.listen((String url) async {
+            if (finish) return null;
+            print('http change url~~~~~~~~~~~~~~~~~~Webview change $url');
+            List<bool> r = iPayApi.check(this.url, this.url_r, this.url_h);
+            if (!r[0]) return null;
+
+            finish = r[0];
+            bool success = r[1];
+            if (success) {
+              int coins = 0;
+              try {
+                Map<String, dynamic> result = await iPayApi.esure(oid);
+                success = result['success'];
+                if (success) coins = result['coins'];
+              } catch (_) {
+                success = false;
+              }
+              if (success) {
+                print('paypal success');
+                SingletonStore.store.dispatch(ChangeCoins(payload: coins));
+                if (widget.callback != null) widget.callback(true);
+                Navigator.pop(this.context);
+                return null;
+              }
+            }
+            setState(() {
+              if (widget.callback != null) widget.callback(false);
+              oid = -2;
+            });
+          });
     }
+    // 下单
     pay();
   }
 
   @override
   void dispose() {
-    super.dispose();
-    stop = true;
-
     this.context = null;
-    _onHttpError.cancel();
-    _onDestroy.cancel();
+    if (iPayApi.h5) {
+      _onHttpError.cancel();
+      _onDestroy.cancel();
+      _onUrlChanged.cancel();
+    }
+    flutterWebviewPlugin.close();
     flutterWebviewPlugin.dispose();
-
-    if (iPayApi != null && !conflict) iPayApi.unlisten();
+    super.dispose();
   }
 
   pay() async {
-
-    setState(() {
-      loading = true;
-    });
-
-
-    Map<String, dynamic> result;
-
+    Map<String, dynamic> createResult;
     try {
-      result = await iPayApi.create(widget.user.uid, widget.money, widget.user.cid, 0);
+      createResult = await iPayApi.create(widget.user.uid, widget.money, widget.user.cid, 0);
+      print('服务端下单成功, 下单金额 ${widget.money}');
     } catch (_) {
       print('服务端下单失败');
       print(_);
       setState(() {
         oid = -1;
-        loading = false;
       });
       return;
     }
+    final Map<String, dynamic> ipayOrder = Map<String, dynamic>.from(createResult['ipay']);
 
-    final Map<String, dynamic> ipayOrder = Map<String, dynamic>.from(result['ipay']);
+    setState(() {
+      oid = createResult['oid'];
+      url = ipayOrder['url'];
+      url_r = ipayOrder['url_r'];
+      url_h = ipayOrder['url_h'];
+      transid = ipayOrder['transid'];
+      print('h5 pay url is ' + url);
+    });
 
-    print('服务端下单成功');
-    oid = result['oid'];
-    url = ipayOrder['url'];
-    if (stop) return;
+    if (!iPayApi.h5) { // 使用APP支付,直接调用爱贝sdk支付
+      print('~~~~~~~~~~try pay by ipay api');
+      final payResult = await iPayApi.pay(transid);
+      print(payResult);
+      print('~~~~~~~~~~try pay by ipay api success');
+      Map<String, dynamic> esureResult = await iPayApi.esure(oid);
+      print('~~~~~~~~~~esure success');
+    }
 
   }
 
   @override
   Widget build(BuildContext context) {
 
-    print('paypal build');
+    print('ipay build');
 
     this.context = context;
 
@@ -235,20 +242,35 @@ class _IPayPageState extends State<IPayPage> {
       );
     }
 
+    if (oid == 0) {
+      return Scaffold(
+          appBar: AppBar(),
+          body: Center(child: CircularProgressIndicator())
+      );
+    }
 
-    return WebviewScaffold(
-        url: url,
-        appBar: AppBar(
-          backgroundColor: Colors.orangeAccent,
-          centerTitle: true,
-          title: Center(child: Text(S.of(context).PayOrder)),
-        ),
-        headers: { 'Content-Type': 'text/html', 'User-Agent': 'For IAppPay'},
-        withZoom: true,
-        withJavascript: true,
-        withLocalStorage: true,
-        withLocalUrl: true,
-        enableMessaging: true
+
+    if (iPayApi.h5) {
+      return WebviewScaffold(
+          url: url,
+          appBar: AppBar(
+            backgroundColor: Colors.orangeAccent,
+            centerTitle: true,
+            title: Center(child: Text(S.of(context).PayOrder)),
+          ),
+          headers: { 'Content-Type': 'text/html', 'User-Agent': 'For IAppPay'},
+          withZoom: true,
+          withJavascript: true,
+          withLocalStorage: true,
+          withLocalUrl: true,
+          enableMessaging: true
+      );
+    }
+
+    return Scaffold(
+        appBar: AppBar(),
+        body: Center(child: CircularProgressIndicator())
     );
+
   }
 }

@@ -76,6 +76,7 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
     Map _platform = widget.user.platforms[platform];
 
     choices = List<int>.from(_platform['choices']);
+    print(choices);
     scale = _platform['scale'];
     currency = _platform['currency'];
     if (choices.length > 0) pay = choices[0];
@@ -92,6 +93,8 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
   }
 
   static Widget pageBuilder(String platform, money, callback) {
+
+    print('money is $money');
 
     switch (platform) {
       case 'paypal': return PaypalPage(money: money, callback: callback);
@@ -152,6 +155,7 @@ class _PlateFormChoiceState extends State<PlateFormChoice> {
                     onTap: () {
                       setState(() {
                         pay = choices[index];
+                        print('change pay to $pay');
                       });
                     },
                   )
